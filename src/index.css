@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(12px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes voiceBar {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1.6); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.35s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.25s ease-out forwards;
+}
+
+.animate-voice-bar {
+  animation: voiceBar 1.2s infinite ease-in-out;
+  transform-origin: center;
+}

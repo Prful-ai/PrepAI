@@ -1,0 +1,9 @@
+{
+  "name": "Professional Interview Intelligence",
+  "description": "An AI-powered interview preparation and talent evaluation platform featuring live mock sessions, custom question sets, resume scanning, and transcription audits.",
+  "requestFramePermissions": [
+    "microphone",
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
