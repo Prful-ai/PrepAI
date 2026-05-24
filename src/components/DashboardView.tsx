@@ -131,32 +131,17 @@ export default function DashboardView({
       });
     }
 
-    // Default template fallback lines
-    return [
-      { name: "S1", "Tech Depth": 58, "Communication": 62, "Problem Solv": 60, "STAR Rule": 55, "Overall": 59 },
-      { name: "S2", "Tech Depth": 60, "Communication": 64, "Problem Solv": 62, "STAR Rule": 58, "Overall": 61 },
-      { name: "S3", "Tech Depth": 63, "Communication": 67, "Problem Solv": 66, "STAR Rule": 62, "Overall": 64 },
-      { name: "S4", "Tech Depth": 66, "Communication": 69, "Problem Solv": 68, "STAR Rule": 65, "Overall": 67 },
-      { name: "S5", "Tech Depth": 69, "Communication": 72, "Problem Solv": 71, "STAR Rule": 68, "Overall": 70 },
-      { name: "S6", "Tech Depth": 71, "Communication": 75, "Problem Solv": 74, "STAR Rule": 71, "Overall": 73 },
-      { name: "S7", "Tech Depth": 74, "Communication": 76, "Problem Solv": 76, "STAR Rule": 73, "Overall": 75 },
-      { name: "S8", "Tech Depth": 76, "Communication": 78, "Problem Solv": 78, "STAR Rule": 74, "Overall": 76 },
-      { name: "S9", "Tech Depth": 79, "Communication": 80, "Problem Solv": 81, "STAR Rule": 75, "Overall": 78 },
-      { name: "S10", "Tech Depth": 81, "Communication": 82, "Problem Solv": 83, "STAR Rule": 77, "Overall": 80 },
-      { name: "S11", "Tech Depth": 84, "Communication": 81, "Problem Solv": 84, "STAR Rule": 76, "Overall": 81 },
-      { name: "S12", "Tech Depth": 85, "Communication": 83, "Problem Solv": 85, "STAR Rule": 77, "Overall": 82 },
-      { name: "S13", "Tech Depth": 86, "Communication": 82, "Problem Solv": 85, "STAR Rule": 78, "Overall": 82 },
-      { name: "S14", "Tech Depth": 88, "Communication": 82, "Problem Solv": 85, "STAR Rule": 76, "Overall": 82 }
-    ];
+    // Default template fallback is completely empty when no data is loaded
+    return [];
   }, [activityHistory]);
 
   const totalSessionsCount = useMemo(() => {
-    return activityHistory.length > 0 ? activityHistory.length : 14;
+    return activityHistory.length;
   }, [activityHistory]);
 
   // 2. Memoize current average communication depth
   const averageCommunicationDepth = useMemo(() => {
-    if (!activityHistory || activityHistory.length === 0) return 82;
+    if (!activityHistory || activityHistory.length === 0) return 0;
     const total = activityHistory.reduce((sum, item) => sum + Math.round(item.score * 0.95), 0);
     return Math.round(total / activityHistory.length);
   }, [activityHistory]);
@@ -165,10 +150,10 @@ export default function DashboardView({
   const competencies = useMemo(() => {
     if (!activityHistory || activityHistory.length === 0) {
       return [
-        { name: "Technical Depth", score: 88, color: "bg-[#2D9CDB]" },
-        { name: "Communication Skills", score: 82, color: "bg-[#27AE60]" },
-        { name: "Problem Solving", score: 85, color: "bg-[#F2994A]" },
-        { name: "Cultural Fit & STAR Method", score: 76, color: "bg-[#8E44AD]" }
+        { name: "Technical Depth", score: 0, color: "bg-[#2D9CDB]" },
+        { name: "Communication Skills", score: 0, color: "bg-[#27AE60]" },
+        { name: "Problem Solving", score: 0, color: "bg-[#F2994A]" },
+        { name: "Cultural Fit & STAR Method", score: 0, color: "bg-[#8E44AD]" }
       ];
     }
     const total = activityHistory.reduce((sum, item) => sum + item.score, 0);
@@ -220,12 +205,12 @@ export default function DashboardView({
   }, [activityHistory, baselineTarget]);
 
   const mainStats = useMemo(() => {
-    const totalDone = activityHistory.length > 0 ? activityHistory.length : 14;
-    const readinessPercentText = `${baselineReadinessFlags.score > 0 ? baselineReadinessFlags.score : 82}%`;
+    const totalDone = activityHistory.length;
+    const readinessPercentText = `${baselineReadinessFlags.score}%`;
 
     return [
-      { label: "Mock Interviews Done", value: String(totalDone), change: "+3 this week", isPositive: true, icon: CheckCircle, color: "text-[#27AE60]" },
-      { label: "Overall Interview Readiness", value: readinessPercentText, change: "+5% vs last month", isPositive: true, icon: Award, color: "text-[#2D9CDB]" },
+      { label: "Mock Interviews Done", value: String(totalDone), change: totalDone > 0 ? "+3 this week" : "No history", isPositive: totalDone > 0, icon: CheckCircle, color: "text-[#27AE60]" },
+      { label: "Overall Interview Readiness", value: readinessPercentText, change: totalDone > 0 ? "+5% dynamic" : "No history", isPositive: totalDone > 0, icon: Award, color: "text-[#2D9CDB]" },
       { label: "Interview Plan Status", value: "Optimized", change: "Resume scanned", isPositive: true, icon: FileText, color: "text-[#8E44AD]" },
       { label: "Pending Mock Feedbacks", value: "0", change: "All compiled", isPositive: true, icon: Clock, color: "text-slate-500" }
     ];
@@ -668,13 +653,13 @@ export default function DashboardView({
                 strokeWidth="10"
                 fill="transparent"
                 strokeDasharray={376.8}
-                strokeDashoffset={376.8 - (376.8 * (baselineReadinessFlags.score > 0 ? baselineReadinessFlags.score : 82)) / 100}
+                strokeDashoffset={376.8 - (376.8 * baselineReadinessFlags.score) / 100}
                 strokeLinecap="round"
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-3xl font-sans font-extrabold text-white tracking-tight">
-                {baselineReadinessFlags.score > 0 ? baselineReadinessFlags.score : 82}%
+                {baselineReadinessFlags.score}%
               </span>
               <span className="text-[9px] text-slate-400 font-mono tracking-wider uppercase">
                 {baselineReadinessFlags.gradeLabel || "Senior"} Grade
